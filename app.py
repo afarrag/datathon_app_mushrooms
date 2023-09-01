@@ -1,7 +1,10 @@
 import streamlit as st
 import pandas as pd
 from src.pd_functions import *
+import base64
+from streamlit.components.v1 import html
 import random
+import math
 
 # Path to results
 RESULTS_PATH = 'data/results.csv'
