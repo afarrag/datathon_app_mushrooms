@@ -47,7 +47,7 @@ def process_file_upload(uploaded_file, participant_name):
                 rain("healed.png",math.floor(random.random()*100))
             else:
                 autoplay_audio('static/poison.mp3')
-                rain("poisoned.png",math.floor(random.random()*100))
+                rain("poisoned.png",math.floor(random.random()*100),300)
 
             display_participant_results(participant_results)
 
@@ -73,7 +73,7 @@ def autoplay_audio(file_path: str):
             md,
             unsafe_allow_html=True,
         )
-def rain(photo,x):
+def rain(photo,x,width=100):
     # Define your javascript
    
     my_css="""
@@ -82,7 +82,7 @@ def rain(photo,x):
   animation-duration: 20s;
   animation-name: slidedown;
   animation-fill-mode: forwards;
-  width: 100px;
+  width: %dpx;
   top: 0;
   left: %dvw;
 }
@@ -92,7 +92,7 @@ def rain(photo,x):
     top: 120%%;
   }
 }
-    """ % (x)
+    """ % (width,x)
     # Wrapt the javascript as html code
     my_html = f'<style>{my_css}</style><img class="rainPhoto" src="./app/static/{photo}"/>'
     st.write(my_html,unsafe_allow_html=True)
