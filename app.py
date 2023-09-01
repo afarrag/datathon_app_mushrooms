@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from src.pd_functions import *
+import random
 
 # Path to results
 RESULTS_PATH = 'data/results.csv'
@@ -38,6 +39,12 @@ def process_file_upload(uploaded_file, participant_name):
             participant_results = get_metrics(RESULTS_PATH, test)
 
             st.success('Dataframe uploaded successfully!')
+            if (participant_results.iloc[0,3]) == 0:
+                autoplay_audio('static/claps.mp3')
+                rain("healed.png",math.floor(random.random()*100))
+            else:
+                autoplay_audio('static/poison.mp3')
+                rain("poisoned.png",math.floor(random.random()*100))
 
             display_participant_results(participant_results)
 
@@ -49,6 +56,44 @@ def process_file_upload(uploaded_file, participant_name):
 def display_participant_results(participant_results):
     st.title('Participant results')
     st.dataframe(participant_results)
+
+def autoplay_audio(file_path: str):
+    with open(file_path, "rb") as f:
+        data = f.read()
+        b64 = base64.b64encode(data).decode()
+        md = f"""
+            <audio autoplay="true">
+            <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+            </audio>
+            """
+        st.markdown(
+            md,
+            unsafe_allow_html=True,
+        )
+def rain(photo,x):
+    # Define your javascript
+   
+    my_css="""
+    .rainPhoto {
+  position: fixed;
+  animation-duration: 20s;
+  animation-name: slidedown;
+  animation-fill-mode: forwards;
+  width: 100px;
+  top: 0;
+  left: %dvw;
+}
+
+@keyframes slidedown {
+  to {
+    top: 120%%;
+  }
+}
+    """ % (x)
+    # Wrapt the javascript as html code
+    my_html = f'<style>{my_css}</style><img class="rainPhoto" src="./app/static/{photo}"/>'
+    st.write(my_html,unsafe_allow_html=True)
+
 
 if __name__ == "__main__":
     main()
