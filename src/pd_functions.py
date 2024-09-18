@@ -4,6 +4,10 @@ import streamlit as st
 import numpy as np
 import os
 
+from urllib.parse import quote_plus
+
+dbuser,dbpass,dbhost,dbport = os.getenv('dbuser'),quote_plus(os.getenv('dbpass')),os.getenv('dbhost'),os.getenv('dbport')
+connection_string = f'mysql+pymysql://{dbuser}:{dbpass}@{dbhost}:{dbport}/mushroom'
 
 def get_ready_test(RESULTS_PATH: str, uploaded_file):
     """
@@ -95,7 +99,7 @@ def plot_submissions():
     submissions.pkl file."""
 
     participant_submissions = (
-        pd.read_pickle('files_to_update/submissions.pkl')
+        pd.read_sql("submissions",con=connection_string)
         .query('Participant == @st.session_state.text_input')
         .filter(['submission_time', 'Recall'])
         .set_index('submission_time')
@@ -115,7 +119,7 @@ def update_submissions(participant_results: pd.DataFrame):
     submissions_path = 'files_to_update/submissions.pkl'
 
     if os.path.isfile(submissions_path):
-        all_submissions = pd.read_pickle(submissions_path)
+        all_submissions = pd.read_sql("submissions",con=connection_string)
     else:
         all_submissions = pd.DataFrame()
 
@@ -124,7 +128,7 @@ def update_submissions(participant_results: pd.DataFrame):
             all_submissions,
             participant_results
         ])
-        .to_pickle(submissions_path)
+        .to_sql("submissions",con=connection_string,if_exists='append', index=False)
     )
 
 
@@ -136,7 +140,7 @@ def show_leaderboard():
     st.title('LEADERBOARD')
 
     st.dataframe(
-        pd.read_pickle('files_to_update/submissions.pkl')
+        pd.read_sql("submissions",con=connection_string)
         .assign(Attempts=lambda df_: df_.groupby('Participant')['Participant'].transform('count'))
         .sort_values(['Recall', 'Accuracy'], ascending=[False, False])
         .drop_duplicates(['Participant'], keep='first')
