@@ -116,20 +116,8 @@ def update_submissions(participant_results: pd.DataFrame):
     This function updates the submissions.pkl file with the
     new results."""
     
-    submissions_path = 'files_to_update/submissions.pkl'
+    participant_results.to_sql("submissions",con=connection_string,if_exists='append', index=False)
 
-    if os.path.isfile(submissions_path):
-        all_submissions = pd.read_sql("submissions",con=connection_string)
-    else:
-        all_submissions = pd.DataFrame()
-
-    (
-        pd.concat([
-            all_submissions,
-            participant_results
-        ])
-        .to_sql("submissions",con=connection_string,if_exists='append', index=False)
-    )
 
 
 
@@ -139,8 +127,10 @@ def show_leaderboard():
 
     st.title('LEADERBOARD')
 
+    all_data = pd.read_sql("submissions",con=connection_string)
+
     st.dataframe(
-        pd.read_sql("submissions",con=connection_string)
+        all_data
         .assign(Attempts=lambda df_: df_.groupby('Participant')['Participant'].transform('count'))
         .sort_values(['Recall', 'Accuracy'], ascending=[False, False])
         .drop_duplicates(['Participant'], keep='first')
@@ -148,3 +138,4 @@ def show_leaderboard():
         .set_index('position')
         .filter(['Participant', 'Recall', 'Accuracy', 'Deaths', 'Edible but uneaten', 'Attempts'])
     )
+    return all_data

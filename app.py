@@ -8,7 +8,6 @@ import math
 
 # Path to results
 RESULTS_PATH = 'data/results.csv'
-
 def main():
     # Get participant name
     participant_name = get_participant_name()
@@ -53,7 +52,9 @@ def process_file_upload(uploaded_file, participant_name):
 
             update_submissions(participant_results)
 
-            if (participant_results.iloc[0,3]) == 0:
+            all_data=show_leaderboard()
+
+            if (participant_results.iloc[0,1]) > (all_data.recall.max()):
                 with st.status("Sending to Slack..."):
                     send_msg_to_slack(participant_results.iloc[0,0],participant_results.iloc[0,1])
                 st.success("Sent to Slack")
@@ -160,7 +161,7 @@ def send_msg_to_slack(new_top,score):
     driver.get(CHANNEL_URL)
     time.sleep(2)  # Adjust if necessary to allow time for page load
 
-    msg = f":rocket: :trophy: {new_top} is now #1 on the [LEADERBORD](https://datathon.streamlit.app) with score {score}!"
+    msg = f":rocket: :trophy: {new_top} is now #1 on the [LEADERBORD](https://datathon.streamlit.app) with recall {score}!"
 
     message_box = driver.find_element(By.CLASS_NAME, 'ql-editor')
     message_box.send_keys(msg)
