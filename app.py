@@ -162,7 +162,7 @@ def send_msg_to_slack(new_top,score):
     driver.get(CHANNEL_URL)
     time.sleep(2)  # Adjust if necessary to allow time for page load
 
-    msg = f":rocket: :trophy: {new_top} is now #1 on the [LEADERBORD](https://datathon.streamlit.app) with recall {score}!"
+    msg = f":rocket: :trophy: {new_top} is now #1 on the [LEADERBORD](https://datathon2.streamlit.app) with recall {score}!"
 
     message_box = driver.find_element(By.CLASS_NAME, 'ql-editor')
     message_box.send_keys(msg)
