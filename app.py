@@ -54,7 +54,7 @@ def process_file_upload(uploaded_file, participant_name):
 
             all_data=show_leaderboard()
 
-            if (participant_results.iloc[0,1]) > (all_data.recall.max()):
+            if (participant_results.iloc[0,1]) > (all_data['Recall'].max()):
                 with st.status("Sending to Slack..."):
                     send_msg_to_slack(participant_results.iloc[0,0],participant_results.iloc[0,1])
                 st.success("Sent to Slack")
