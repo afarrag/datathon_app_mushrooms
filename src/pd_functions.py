@@ -139,3 +139,6 @@ def show_leaderboard():
         .filter(['Participant', 'Recall', 'Accuracy', 'Deaths', 'Edible but uneaten', 'Attempts'])
     )
     return all_data
+
+def get_all_submissions():
+    return pd.read_sql("submissions",con=connection_string)
