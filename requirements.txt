@@ -3,3 +3,4 @@ seleniumbase
 webdriver-manager
 pymysql
 SQLAlchemy
+cryptography
